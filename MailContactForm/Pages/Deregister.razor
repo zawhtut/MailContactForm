@@ -1,0 +1,38 @@
+﻿@page "/de-register"
+@inject IConfiguration Config
+
+<h1>De-Register Contact Mail</h1>
+
+
+<h3>Registered User</h3>
+<p>User ID: @UserID</p>
+<p>Email: @Email</p>
+<button class="btn btn-danger" @onclick="ClearValues">Deregister</button>
+
+@code {
+    private string UserID { get; set; }
+    private string Email { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Read the values from appsettings.json
+        UserID = Config["settings:userID"];
+        Email = Config["settings:userEmail"];
+
+        base.OnInitialized();
+    }
+
+    private void ClearValues()
+    {
+        // Clear the values in appsettings.json
+        Config["settings:userID"] = "";
+        Config["settings:userEmail"] = "";
+
+        // Reload the configuration
+        ((IConfigurationRoot)Config).Reload();
+        
+        // Update the properties
+        UserID = "";
+        Email = "";
+    }
+}

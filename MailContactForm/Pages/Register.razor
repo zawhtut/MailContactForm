@@ -1,0 +1,42 @@
+﻿@page "/register"
+@using MailContactForm.Data
+@inject MailContactForm.Data.Register register
+
+
+<h1>Register Contact Mail</h1>
+
+@if (string.IsNullOrEmpty(userId))
+{
+    <p>Please click the button below to retrieve your Microsoft Graph User ID:</p>
+    <button class="btn btn-primary" @onclick="GetUserId">Get User ID</button>
+}
+else
+{
+    <p>Your Microsoft Graph User ID is: @userId</p>
+    <p>Would you like to register this User ID with the application?</p>
+    <button class="btn btn-primary" @onclick="RegisterUserId">Register User ID</button>
+}
+
+@code {
+    private string userId;
+    private string userEmail;
+    private async Task GetUserId()
+    {
+        (string userId, string userEmail) = await register.GetUserIdAndEmail();
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var settings = Settings.LoadSettings();
+
+        // Initialize Graph
+        register.InitialRegister(settings);
+
+    }
+    private async Task RegisterUserId()
+    {
+        await register.UpdateUserId(userId,userEmail);
+        StateHasChanged();
+    }
+}
